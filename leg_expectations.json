@@ -1,0 +1,475 @@
+{
+ "$schema": "leg_expectations_v1",
+ "last_updated": "2026-10-15",
+ "legs": {
+  "advisor-pay-tabs": {
+   "expectations": [
+    {
+     "expected": 18,
+     "key": "cells_written",
+     "kind": "numeric",
+     "sigma": 1,
+     "source": "Dylan Pay + Jessica Pay read-back",
+     "statement": "18 cells written and read-back verified across both pay tabs"
+    },
+    {
+     "key": "csi_dashes",
+     "kind": "boolean",
+     "source": "the survey platform Overall Satisfaction index vs B10/F11",
+     "statement": "CSI dashes appear ONLY where the survey platform shows zero surveys \u2014 a dash means genuinely no data, and is replaced the moment data exists"
+    },
+    {
+     "key": "no_silent_deferral",
+     "kind": "boolean",
+     "source": "run log",
+     "statement": "A dashed section is never 'done' \u2014 deferral without investigation or ping is a failure (2026-10-02)"
+    },
+    {
+     "audited_dates": [
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16"
+     ],
+     "key": "dylan_pto_dampener_20261014_16",
+     "kind": "expectation_override",
+     "source": "the principal ruling 2026-10-15; attendance calendar (Dylan PTO Oct 14-16)",
+     "statement": "Dylan Patton is on PTO for audited dates Oct 14-16, 2026 (Jessica Schurz solo coverage). Dylan-side CP/F5/per-advisor deltas of zero or near-zero on those audited dates are EXPECTED absence, not an anomaly - do not fire or investigate a flat Dylan. Jessica-side CP volume elevated above her two-advisor baseline on those dates is EXPECTED solo coverage, not an anomaly. Applies ONLY to audited dates 2026-10-14/15/16; expires after the Sat 2026-10-17 run. (Gemini action plan item 3; approved by the principal 2026-10-15, full-stack ruling. Dylan's Oct 26 PTO is NOT covered by this dampener.)"
+    }
+   ],
+   "job": "advisor-pay-tabs"
+  },
+  "advisor-performance": {
+   "expectations": [
+    {
+     "key": "filter_range_verified",
+     "kind": "boolean",
+     "source": "the source system report header range + Last Updated timestamp",
+     "statement": "Displayed Closed Date range equals 1st of audited month through audited date AND Last Updated is fresh before any number is read"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    },
+    {
+     "audited_dates": [
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16"
+     ],
+     "key": "dylan_pto_dampener_20261014_16",
+     "kind": "expectation_override",
+     "source": "the principal ruling 2026-10-15; attendance calendar (Dylan PTO Oct 14-16)",
+     "statement": "Dylan Patton is on PTO for audited dates Oct 14-16, 2026 (Jessica Schurz solo coverage). Dylan-side CP/F5/per-advisor deltas of zero or near-zero on those audited dates are EXPECTED absence, not an anomaly - do not fire or investigate a flat Dylan. Jessica-side CP volume elevated above her two-advisor baseline on those dates is EXPECTED solo coverage, not an anomaly. Applies ONLY to audited dates 2026-10-14/15/16; expires after the Sat 2026-10-17 run. (Gemini action plan item 3; approved by the principal 2026-10-15, full-stack ruling. Dylan's Oct 26 PTO is NOT covered by this dampener.)"
+    }
+   ],
+   "job": "advisor-performance"
+  },
+  "csi-survey-pull": {
+   "expectations": [
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after each write block",
+     "statement": "Every written cell read-back verifies (value AND number format)"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    }
+   ],
+   "job": "csi-survey-pull",
+   "live_read_metrics": [
+    "nps_csi",
+    "blended_metric"
+   ]
+  },
+  "daily-ro-audit": {
+   "expectations": [
+    {
+     "key": "video_failures_named",
+     "kind": "boolean",
+     "source": "video-manifest.csv vs audit sheet",
+     "statement": "Video download failures are named per RO, not summarized away"
+    },
+    {
+     "key": "missed_traceable",
+     "kind": "boolean",
+     "source": "audit sheet RO-level rows",
+     "statement": "Missed hours/dollars trace to specific ROs"
+    },
+    {
+     "expected": 11,
+     "key": "cp_ro_count",
+     "kind": "numeric",
+     "model": "single_range",
+     "note": "Derived from run logs 2026-10-13 (not asserted): 12 logged observations [0,0,0,7,8,9,10,11,13,14,14,16]; the three 0s are documented stale-data artifacts, each corrected by a fresh re-read the same day. Genuine counts n=9: median 11, MAD 3.0, robust sigma 1.4826*MAD = 4.45, span 7-16 (plus 6 on 10-01 per a predict-step source note). SINGLE range model 5-16 for all weekdays replaces the two contradictory staged calibrations (daily range 5-15 vs weekday prior 12-16) that disagreed on a legitimate Friday 8 (break-test B7x). With expected=median 11 and sigma=4.45 every genuine count on record sits at z <= 1.13, while a true zero still fires (z=2.47).",
+     "range": [
+      5,
+      16
+     ],
+     "sigma": 4.45,
+     "source": "runs/*.jsonl observed cp_ro_count values, 2026-10-03..2026-10-13",
+     "statement": "Daily CP RO count follows ONE robust range model (5-16, empirical median 11, robust sigma 4.45) on every weekday - no separate weekday prior"
+    },
+    {
+     "audited_dates": [
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16"
+     ],
+     "key": "dylan_pto_dampener_20261014_16",
+     "kind": "expectation_override",
+     "source": "the principal ruling 2026-10-15; attendance calendar (Dylan PTO Oct 14-16)",
+     "statement": "Dylan Patton is on PTO for audited dates Oct 14-16, 2026 (Jessica Schurz solo coverage). Dylan-side CP/F5/per-advisor deltas of zero or near-zero on those audited dates are EXPECTED absence, not an anomaly - do not fire or investigate a flat Dylan. Jessica-side CP volume elevated above her two-advisor baseline on those dates is EXPECTED solo coverage, not an anomaly. Applies ONLY to audited dates 2026-10-14/15/16; expires after the Sat 2026-10-17 run. (Gemini action plan item 3; approved by the principal 2026-10-15, full-stack ruling. Dylan's Oct 26 PTO is NOT covered by this dampener.)"
+    }
+   ],
+   "job": "daily-ro-audit"
+  },
+  "daily-tracking-master": {
+   "expectations": [
+    {
+     "key": "audited_date_cell",
+     "kind": "equality",
+     "source": "Service Performance!D5 vs run audited date",
+     "statement": "Master audited-date cell matches the pull date"
+    },
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after each write block",
+     "statement": "Every written cell read-back verifies (value AND number format)"
+    },
+    {
+     "key": "percent_format",
+     "kind": "boolean",
+     "source": "B8:D8 format read-back (2026-10-02 incident: format stripped on write)",
+     "statement": "Percentage cells keep the 0.0% number format after write"
+    },
+    {
+     "key": "app_renders",
+     "kind": "boolean",
+     "source": "app CSV feed check (2026-10-02 incident: B3/D3 write shifted positional rows)",
+     "statement": "Service Pulse app renders the KPI feed with no #DIV/0!, no shifted rows"
+    },
+    {
+     "key": "month_boundary",
+     "kind": "boolean",
+     "source": "D2 vs statement month",
+     "statement": "No month-boundary write lands without D2 flipped to the new month count"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    },
+    {
+     "key": "g5_ro_count",
+     "kind": "delta",
+     "note": "DELTA METRIC (2026-10-13): observe the DAILY INCREMENT (today's level - most recent prior logged level) via observe_delta, gated against a daily-volume baseline - never the cumulative level against yesterday's level. Level-gating false-fired structurally (break-test B8/B8b; B8b fired live at sigma=12). Documented daily increments on record: +41 (10-06->10-07), +43 (10-07->10-08).",
+     "source": "the source system Advisor Recommendations MTD count (cumulative level)",
+     "statement": "G5 RO count is gated on its daily increment vs weekday volume, not on the cumulative MTD level"
+    },
+    {
+     "key": "mtd_ro_total",
+     "kind": "delta",
+     "note": "DELTA METRIC (2026-10-13): observe the DAILY INCREMENT via observe_delta, gated against a daily-volume baseline - never the cumulative level against yesterday's level. Documented daily adds run 10-25 (staged PREDICTION_SIGMA_MISCALIBRATED record: +25 on 10-09, +10 on 10-10); level-gating with sigma=2 fired at z=5.0 on a normal day (break-test A5/B5).",
+     "source": "the source system Advisor Performance MTD RO total (cumulative level)",
+     "statement": "MTD RO total is gated on its daily increment vs weekday volume, not on the cumulative MTD level"
+    }
+   ],
+   "job": "daily-tracking-master"
+  },
+  "financial-statements": {
+   "expectations": [
+    {
+     "key": "statement_month",
+     "kind": "boolean",
+     "source": "the source system Financial Statements statement date vs run month",
+     "statement": "A5/B33/B34 come from the latest available (current-month) statement, Mechanical Dept columns, never Total Dealership or YTD"
+    },
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after each write block",
+     "statement": "Every written cell read-back verifies (value AND number format)"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    }
+   ],
+   "job": "financial-statements"
+  },
+  "flagged-hours": {
+   "expectations": [
+    {
+     "key": "e5_grows",
+     "kind": "boolean",
+     "source": "E5 before/after within the audited month",
+     "statement": "E5 (MTD SHOP HOURS) after the run is >= E5 before, except a month-rollover reset on the 1st"
+    },
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after each write block",
+     "statement": "Every written cell read-back verifies (value AND number format)"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    }
+   ],
+   "job": "flagged-hours",
+   "live_read_metrics": [
+    "flagged_day_total",
+    "e5_mtd_shop_hours"
+   ]
+  },
+  "internal-ro-sweep": {
+   "expectations": [
+    {
+     "key": "session_verified_by_app_shell",
+     "kind": "boolean",
+     "source": "the source system app-shell markers on the persistent Firefox profile",
+     "statement": "The the source system session is proven signed in by app-shell content (module nav + 'the dealership Inc' header) before any RO is touched \u2014 a login-wall redirect is a BLOCK, never worked around"
+    },
+    {
+     "key": "every_listed_ro_examined",
+     "kind": "boolean",
+     "source": "per-RO inspection pass over the 'UCI in Process' list",
+     "statement": "Every RO in the UCI in Process list is opened and its Recommendations, Jobs, and parts state read before any flag decision is made for it"
+    },
+    {
+     "key": "flag_decisions_follow_ruled_chain",
+     "kind": "boolean",
+     "source": "the principal's UCI ruling set, 2026-10-23 (runbook)",
+     "statement": "Every flag change matches one ruled branch of the decision chain; a state matching no ruled branch leaves the flag UNCHANGED and lands in the report's Questions \u2014 never an improvised flag"
+    },
+    {
+     "key": "flag_family_never_crosses",
+     "kind": "boolean",
+     "source": "flag taxonomy check per RO",
+     "statement": "UCI ROs carry only UCI-family flags (Needs UCI, UCI 3 Days Or Over, UCI Approvals Needed, UCI Parts On Order, UCI PARTS ARE HERE) plus Ready To Be Closed; a customer-family flag found on a UCI RO is a mislabel \u2014 corrected to the UCI flag matching verified state and reported"
+    },
+    {
+     "key": "flag_changes_verified_by_reread",
+     "kind": "boolean",
+     "source": "post-change re-read of the RO flag",
+     "statement": "Every flag change is verified by re-reading the RO's flag after the change ('Updated Successfully' alone is not proof); an unverifiable change is reported UNVERIFIED, never as done"
+    },
+    {
+     "key": "report_lists_decisions",
+     "kind": "boolean",
+     "source": "sweep report to chat",
+     "statement": "The sweep report lists every change (RO, old -> new flag, rule applied), every Ready To Be Closed RO for the principal's close-out, the Approvals Needed ROs with their ages, any mislabels caught, and any unruled states as questions"
+    }
+   ],
+   "job": "internal-ro-sweep"
+  },
+  "kpi-feed": {
+   "expectations": [
+    {
+     "key": "feed_stamp_sequence",
+     "kind": "boolean",
+     "source": "KPI feed sheet C2:C6 last stamp vs audited date",
+     "statement": "The feed's prior date stamp is the most recent prior business day before the audited date (skipping Sunday, when the shop is closed and no stamp exists) before any MTD carryover math runs"
+    },
+    {
+     "key": "app_renders",
+     "kind": "boolean",
+     "source": "app CSV feed check (2026-10-02 incident: B3/D3 write shifted positional rows)",
+     "statement": "Service Pulse app renders the KPI feed with no #DIV/0!, no shifted rows"
+    },
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after each write block",
+     "statement": "Every written cell read-back verifies (value AND number format)"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    }
+   ],
+   "job": "kpi-feed"
+  },
+  "labor-ops-pull": {
+   "expectations": [
+    {
+     "expected": "grid_count",
+     "key": "pull_window",
+     "kind": "delta",
+     "note": "DELTA METRIC (2026-10-17, the principal's sign-off of PULL_WINDOW_CUMULATIVE_DRIFT_MISCLASSIFIED): pull_window is a CUMULATIVE MTD grid count - observe the LEVEL via observe-delta (--delta-expected 34 --delta-sigma 12), never plain-observe the level: the stationary 14-day median anchor misfired live on 2026-10-17 (level 477 vs anchor 266.5, z=210.5) on a healthy pull. Calibration: documented Oct 2026 increments per audited day run +23..+55 (levels 163,213,247,286,309,350,384,422,477; mean +39.25/audited day). delta_expected=34 is the CALENDAR-day slope (39.25 x 6/7 - the shop is closed Sundays and _drift_trajectory extrapolates per calendar day); verified against real history 2026-10-17: trajectory z=0.67 quiet, increments 23-55 all z<=1.75, a stale-export zero increment z=2.83, a doubled window z=6.33. Known edge: a holiday-closed weekday inside the 14-day window bends the trajectory once - investigate as calendar effect before treating as drift. The parsed_ops == grid count equality remains the step-4c business check (sigma=1 semantics live there, not in the drift path).",
+     "sigma": 1,
+     "source": "the source system grid N Record(s) vs parser parsed_ops",
+     "statement": "pull_window (cumulative MTD grid count) is gated on its daily increment via observe-delta (trajectory owns drift); the export's parsed-op count still reconciles exactly with the grid record count as the step-4c business check"
+    },
+    {
+     "key": "mtd_sanity",
+     "kind": "boolean",
+     "source": "prior run snapshot comparison",
+     "statement": "MTD totals pass sanity check against prior counts (no ~2x overnight jumps)"
+    },
+    {
+     "key": "row_labels",
+     "kind": "boolean",
+     "source": "Labor OP Sales Goals tab read",
+     "statement": "B5:B24 row labels verify before write"
+    }
+   ],
+   "job": "labor-ops-pull"
+  },
+  "ot-attendance": {
+   "expectations": [
+    {
+     "key": "attendance_checked",
+     "kind": "boolean",
+     "source": "the dealership attendance sheet month tab + Closed Dates tab",
+     "statement": "Every 0.00 clocked day is cross-checked against the attendance sheet before it is reported as a possible missing punch"
+    }
+   ],
+   "job": "ot-attendance",
+   "live_read_metrics": [
+    "clocked",
+    "attendance"
+   ]
+  },
+  "tech-metrics-refresh": {
+   "expectations": [
+    {
+     "key": "clocked_reconciles",
+     "kind": "boolean",
+     "source": "the timecard system vs Master Shop performance tab",
+     "statement": "the timecard system clocked hours reconcile with the Master's pay-week columns"
+    },
+    {
+     "key": "missing_punches",
+     "kind": "boolean",
+     "source": "the timecard system exceptions",
+     "statement": "Missing punches are recorded as missing, never guessed"
+    },
+    {
+     "key": "zeroed_rows",
+     "kind": "boolean",
+     "source": "run log annotations",
+     "statement": "Zeroed rows carry the reason (e.g. call-out confirmed by the principal)"
+    }
+   ],
+   "job": "tech-metrics-refresh",
+   "live_read_metrics": [
+    "flag_mtd_total",
+    "clocked"
+   ]
+  },
+  "tech-utilization": {
+   "cadence_metrics": [
+    "mtd_ro_total"
+   ],
+   "expectations": [
+    {
+     "key": "dual_date_ranges",
+     "kind": "boolean",
+     "source": "Technology Utilization filter overlay re-read",
+     "statement": "BOTH date ranges (RO Closed Date and RO Opened Date) equal 1st of audited month through audited date before KPI cards are read"
+    },
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after each write block",
+     "statement": "Every written cell read-back verifies (value AND number format)"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    }
+   ],
+   "job": "tech-utilization"
+  },
+  "timecard-clocked": {
+   "expectations": [
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after each write block",
+     "statement": "Every written cell read-back verifies (value AND number format)"
+    },
+    {
+     "key": "clean_means_landed",
+     "kind": "boolean",
+     "source": "post-write verification",
+     "statement": "A run reports clean ONLY if the write was verified landed \u2014 a clean report on stale data is a failure (2026-10-01/02 rule)"
+    }
+   ],
+   "job": "timecard-clocked",
+   "live_read_metrics": [
+    "clocked_hours"
+   ]
+  },
+  "warranty-paid-review": {
+   "expectations": [
+    {
+     "key": "line_by_line",
+     "kind": "boolean",
+     "source": "the warranty portal claim detail per RO",
+     "statement": "Paid-vs-billed reconciled line by line across EVERY job of every RO before any close \u2014 a 'non-claimable' note never excludes a job from the totals (2026-09-30 RO 39889)"
+    },
+    {
+     "key": "clean_means_clean",
+     "kind": "boolean",
+     "source": "reconcile step per RO",
+     "statement": "Auto-close only when every paid line reconciles with NO adjustments; adjusted ROs are flagged, never auto-closed"
+    },
+    {
+     "key": "gwm_then_jl",
+     "kind": "boolean",
+     "source": "per-RO check log",
+     "statement": "Every RO runs through the warranty portal Accepted first, then the claims tracker Track \u2014 even when the warranty portal already showed it"
+    }
+   ],
+   "job": "warranty-paid-review"
+  },
+  "working-days": {
+   "expectations": [
+    {
+     "key": "label_and_pattern",
+     "kind": "boolean",
+     "source": "Service Performance tab: 'Working Days' label cell + value cell below it",
+     "statement": "The 'Working Days' label is found on a fresh read and the value cell below it matches the 'N of T Day' pattern before any write; otherwise skip and report"
+    },
+    {
+     "key": "count_from_calendar",
+     "kind": "boolean",
+     "source": "calendar math via date + Master 'Holidays' tab",
+     "statement": "N = Mon-Sat days from the 1st of the audited month through the audited date excluding Holidays-tab dates; T = the same count for the full audited month; weekday math always computed with the date command, never from memory"
+    },
+    {
+     "key": "formula_untouched",
+     "kind": "boolean",
+     "source": "Service Performance E2 (Month Elapsed)",
+     "statement": "E2 is a formula parsing D2 and is never written; after the D2 write it recomputes to N/T"
+    },
+    {
+     "key": "write_readback",
+     "kind": "boolean",
+     "source": "read-back after write",
+     "statement": "D2 read-back equals the written 'N of T Day' string before the run reports clean"
+    }
+   ],
+   "job": "working-days"
+  }
+ },
+ "note": "Predict-step expectations for each morning-batch leg. Loaded by the worker at Step 0, logged via curiosity_loop.py predict before each major action. sigma values are baseline deviations from recent runs \u2014 any deviation beyond z>2 is notable, z>3 is an anomaly."
+}

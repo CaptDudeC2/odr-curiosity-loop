@@ -1,0 +1,98 @@
+{
+ "$schema": "curiosity_manifest_v1",
+ "drift_detection": "Slow-drift detection (v1.2 D13 design, agreed 2026-10-13; built 2026-10-16, the principal's fix ruling). The per-day gate is stateless, so a metric creeping a little each day under a rolling anchor never accumulates surprise (break-test D13). The loop now holds the anchor from the job's OWN logged history (per-job scoping, same fix as the delta baselines): stationary metrics are compared in observe() against the median of their logged levels over the trailing 14 days (last level per day; needs >=5 distinct prior days to speak); cumulative metrics are compared in observe_delta() against a trajectory band \u2014 earliest in-window level + expected daily increment x elapsed calendar days (needs >=3 in-window points and an anchor >=2 days old) \u2014 never a trailing median of levels. A firing drift verdict (SLOW_DRIFT_MEDIAN_ANCHOR / SLOW_DRIFT_TRAJECTORY) is its own tier like a Tier 0 breach: computed from held history, not worker phrasing, so the relevance floor does not veto it. Drift evidence is recorded on the observed event (additive 'drift' object) whether or not it fires. Design record: morning-batch-report-2026-10-14.md; build record: patch-2026-10-16-fixes.md.",
+ "freshness_proofs": {
+  "cadence_max_age_hours": 26.0,
+  "live_read": "For sources that print no stamp because the read is live against the system of record (timecard exports, survey-platform views, source-system Performance). Declared per leg in leg_expectations.json live_read_metrics (metric-name prefixes; exact or prefix+'_' match). Tier 0 then requires BOTH the retrieval timestamp (page/system clock at the moment of the live read, parsed and within max_age_hours) AND an explicit population-completeness assertion (--population-complete: every expected record present, expected zeros included). Missing either = fail-closed breach. The proof mode used is recorded on every freshness record. Authorized by the principal 2026-10-14 as the correct fix, not an exemption.",
+  "nightly_cadence": "For sources that print a Last Updated stamp produced by a NIGHTLY batch for the audited date (a source-system utilization report, ~11:47 PM). Declared per leg in leg_expectations.json cadence_metrics (the metric names that identify the leg's nightly-batch source). Since the 2026-10-16 routing fix, a non-empty declaration marks the LEG: ALL of the leg's observes (business and auxiliary alike) take the cadence proof, because the cadence is a property of the leg's source, not of one metric (2026-10-16 incident: the tech-utilization leg's auxiliary write_readback observe false-fired STALE_DATA_BREACH at 5.81h under the strict 4h stamp rule while the leg's business metric passed under cadence). Tier 0 still requires the printed stamp, present and parseable (fail-closed as report_stamp); only the age bound changes, to cadence_max_age_hours \u2014 a stamp older than that means last night's batch did not land and still breaches. Proof mode recorded on every freshness record. Approved by the principal 2026-10-15 (TECH_UTIL_NIGHTLY_STAMP_CADENCE sign-off, full-stack ruling); leg-level routing approved 2026-10-16.",
+  "report_stamp": "Default proof. The source report's printed Last Updated stamp must parse and fall within the objective's max_age_hours. Missing/unparseable/stale = fail-closed breach."
+ },
+ "gates": {
+  "allowance_per_run": 3,
+  "investigation_ttl_minutes": 10,
+  "investigation_ttl_steps": 5,
+  "numeric_z_threshold": 2.0,
+  "semantic_divergence_threshold": 0.65
+ },
+ "last_updated": "2026-10-16",
+ "metric_objectives": {
+  "cp_mech_ro_mtd": "obj_service_reporting_accuracy",
+  "cp_ro_count": "obj_service_reporting_accuracy",
+  "e5_mtd_shop_hours": "obj_service_reporting_accuracy",
+  "g5_ro_count": "obj_service_reporting_accuracy",
+  "mtd_ro_total": "obj_service_reporting_accuracy",
+  "ro_queue_count": "obj_accounting_reconciliation"
+ },
+ "objectives": [
+  {
+   "description": "Warranty claim validation, CP split enforcement, and DMS balancing",
+   "entities": [
+    "source_dms",
+    "warranty_portal",
+    "repair_order",
+    "customer_pay",
+    "warranty_schedule"
+   ],
+   "id": "obj_accounting_reconciliation",
+   "priority": 1.0,
+   "tolerances": {
+    "balance_delta_max": 0.0,
+    "count_delta_max": 0,
+    "max_age_hours": 72.0,
+    "requires_freshness": true,
+    "unapplied_labor_max": 0.0
+   }
+  },
+  {
+   "description": "Core entity formation, architectural automation IP, and infrastructure",
+   "entities": [
+    "venture",
+    "infrastructure",
+    "commercialization",
+    "agent_architecture"
+   ],
+   "id": "obj_venture_formation",
+   "priority": 0.95
+  },
+  {
+   "description": "the timecard system hours sync and weekly technician payroll reconciliation",
+   "entities": [
+    "timecard_system",
+    "overtime",
+    "technician_labor",
+    "payroll_sheet"
+   ],
+   "id": "obj_payroll_timecard_sync",
+   "priority": 0.85,
+   "tolerances": {
+    "hours_delta_max": 0.1,
+    "max_age_hours": 14.0,
+    "requires_freshness": true
+   }
+  },
+  {
+   "description": "Service Daily Tracking report accuracy: correct values, cell formats, and app rendering every morning by 7am; a clean report on stale data is a failure",
+   "entities": [
+    "service_daily_tracking",
+    "advisor_metrics",
+    "labor_ops",
+    "pay_tabs",
+    "tech_pulse",
+    "ro_audit",
+    "report",
+    "sheet",
+    "app",
+    "write_verification"
+   ],
+   "id": "obj_service_reporting_accuracy",
+   "priority": 0.9,
+   "tolerances": {
+    "max_age_hours": 4.0,
+    "requires_freshness": true,
+    "stale_report_max": 0,
+    "unverified_write_max": 0
+   }
+  }
+ ],
+ "version": "1.5.0"
+}
